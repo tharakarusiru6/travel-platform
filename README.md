@@ -1,4 +1,4 @@
-# ✦ WTravelNest — Travel Experience Platform
+# ✦ TravelNest — Travel Experience Platform
 
 A full-stack web application where experience providers can publish travel listings and travelers can discover unique local experiences.
 
