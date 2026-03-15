@@ -37,10 +37,14 @@ const listingSchema = new mongoose.Schema({
   likes: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  }]
+  }],
+  // owner decides if comments are allowed
+  commentsAllowed: {
+    type: Boolean,
+    default: true
+  }
 }, { timestamps: true });
 
-// Index for search and sorting
 listingSchema.index({ title: 'text', location: 'text', description: 'text' });
 listingSchema.index({ createdAt: -1 });
 

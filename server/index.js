@@ -5,10 +5,11 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const listingRoutes = require('./routes/listings');
+const commentRoutes = require('./routes/comments');
+const ratingRoutes = require('./routes/ratings'); // ✅ NEW
 
 const app = express();
 
-// Middleware
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:5173',
   credentials: true
@@ -18,13 +19,13 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingRoutes);
+app.use('/api/listings/:listingId/comments', commentRoutes);
+app.use('/api/listings/:listingId/ratings', ratingRoutes); // ✅ NEW
 
-// Health check
 app.get('/', (req, res) => {
-  res.json({ message: 'Travel Platform API is running!' });
+  res.json({ message: 'TravelNest API is running!' });
 });
 
-// Connect to MongoDB and start server
 const PORT = process.env.PORT || 5000;
 
 mongoose.connect(process.env.MONGO_URI)

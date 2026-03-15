@@ -6,7 +6,7 @@ import './ListingForm.css'
 
 export default function EditListing() {
   const { id } = useParams()
-  const [form, setForm] = useState({ title: '', location: '', imageUrl: '', description: '', price: '' })
+  const [form, setForm] = useState({ title: '', location: '', imageUrl: '', description: '', price: '', commentsAllowed: true })
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(true)
   const navigate = useNavigate()
@@ -19,14 +19,18 @@ export default function EditListing() {
           location: data.location,
           imageUrl: data.imageUrl,
           description: data.description,
-          price: data.price ?? ''
+          price: data.price ?? '',
+          commentsAllowed: data.commentsAllowed !== undefined ? data.commentsAllowed : true // ✅ NEW
         })
       })
       .catch(() => { toast.error('Listing not found'); navigate('/') })
       .finally(() => setFetching(false))
   }, [id])
 
-  const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }))
+  const handleChange = e => {
+    const { name, value, type, checked } = e.target
+    setForm(f => ({ ...f, [name]: type === 'checkbox' ? checked : value }))
+  }
 
   const handleSubmit = async e => {
     e.preventDefault()
@@ -81,10 +85,26 @@ export default function EditListing() {
                 <label>Price (USD) — optional</label>
                 <input type="number" name="price" value={form.price} onChange={handleChange} min="0" step="0.01" />
               </div>
+
+              {/* ✅ NEW — Comments toggle */}
+              <div className="form-group toggle-group">
+                <label className="toggle-label">
+                  <input
+                    type="checkbox"
+                    name="commentsAllowed"
+                    checked={form.commentsAllowed}
+                    onChange={handleChange}
+                    className="toggle-checkbox"
+                  />
+                  <span className="toggle-slider"></span>
+                  <span className="toggle-text">
+                    {form.commentsAllowed ? '💬 Comments enabled' : '🚫 Comments disabled'}
+                  </span>
+                </label>
+              </div>
+
               <div className="form-actions">
-                <button type="button" className="btn btn-secondary" onClick={() => navigate(`/listings/${id}`)}>
-                  Cancel
-                </button>
+                <button type="button" className="btn btn-secondary" onClick={() => navigate(`/listings/${id}`)}>Cancel</button>
                 <button type="submit" className="btn btn-primary" disabled={loading}>
                   {loading ? 'Saving...' : 'Save Changes'}
                 </button>

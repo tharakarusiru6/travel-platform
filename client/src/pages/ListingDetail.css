@@ -16,10 +16,28 @@
   border-radius: 24px; overflow: hidden;
   box-shadow: var(--card-shadow); aspect-ratio: 4/3;
   position: sticky; top: 90px;
+  /* ✅ needed for badge positioning */
+  position: relative;
 }
 
 .detail-image-wrap img {
   width: 100%; height: 100%; object-fit: cover;
+}
+
+/* ✅ NEW — rating badge on image */
+.image-rating-badge {
+  position: absolute;
+  bottom: 14px; left: 14px;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(6px);
+  padding: 0.4rem 0.85rem;
+  border-radius: 50px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+
+/* ✅ NEW — large rating under title */
+.detail-rating-display {
+  margin-bottom: 1.2rem;
 }
 
 .detail-location {
@@ -30,7 +48,7 @@
 
 .detail-title {
   font-size: clamp(1.6rem, 3vw, 2.4rem);
-  color: var(--ink); line-height: 1.2; margin-bottom: 1.5rem;
+  color: var(--ink); line-height: 1.2; margin-bottom: 0.6rem;
 }
 
 .detail-meta {
@@ -55,20 +73,23 @@
   font-size: 1.6rem; font-weight: 700; color: var(--terracotta);
   font-family: 'Playfair Display', serif;
 }
-.detail-price span { font-size: 0.75rem; color: var(--mist); font-family: 'DM Sans', sans-serif; font-weight: 400; display: block; }
+.detail-price span {
+  font-size: 0.75rem; color: var(--mist);
+  font-family: 'DM Sans', sans-serif; font-weight: 400; display: block;
+}
 
-.detail-desc { margin-bottom: 2rem; }
+.detail-desc { margin-bottom: 1.5rem; }
 .detail-desc h3 { font-size: 1.1rem; margin-bottom: 0.75rem; color: var(--ink); }
 .detail-desc p { color: var(--ink-light); line-height: 1.75; font-size: 1rem; }
 
 .detail-actions {
   display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;
+  margin-bottom: 1rem;
 }
 
 .like-btn {
   background: var(--sand); color: var(--ink);
-  border: 1.5px solid var(--sand-dark);
-  font-size: 0.95rem;
+  border: 1.5px solid var(--sand-dark); font-size: 0.95rem;
   transition: all 0.2s;
 }
 .like-btn:hover, .like-btn.liked {
@@ -76,12 +97,11 @@
 }
 
 .delete-confirm {
-  display: flex; align-items: center; gap: 0.5rem;
-  flex-wrap: wrap;
+  display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
 }
 .delete-confirm span { font-size: 0.9rem; color: var(--ink-light); }
 
 @media (max-width: 768px) {
   .detail-layout { grid-template-columns: 1fr; }
-  .detail-image-wrap { position: static; aspect-ratio: 16/9; }
+  .detail-image-wrap { aspect-ratio: 16/9; }
 }

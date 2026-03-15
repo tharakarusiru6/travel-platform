@@ -40,7 +40,7 @@
 
 .card-body {
   padding: 1.2rem 1.3rem 1.3rem;
-  flex: 1; display: flex; flex-direction: column; gap: 0.4rem;
+  flex: 1; display: flex; flex-direction: column; gap: 0.35rem;
 }
 
 .card-location {
@@ -51,6 +51,11 @@
 .card-title {
   font-size: 1.1rem; font-weight: 600; color: var(--ink);
   line-height: 1.3;
+}
+
+/* ✅ NEW */
+.card-rating {
+  margin: 0.1rem 0;
 }
 
 .card-desc {

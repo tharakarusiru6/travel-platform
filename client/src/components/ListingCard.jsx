@@ -1,9 +1,20 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { formatDistanceToNow } from 'date-fns'
+import api from '../utils/api'
+import StarRating from './StarRating'
 import './ListingCard.css'
 
 export default function ListingCard({ listing }) {
   const { _id, title, location, imageUrl, description, price, creator, createdAt, likes } = listing
+  const [rating, setRating] = useState({ average: 0, total: 0 })
+
+  // Fetch rating for this listing
+  useEffect(() => {
+    api.get(`/listings/${_id}/ratings`)
+      .then(({ data }) => setRating({ average: data.average, total: data.total }))
+      .catch(() => {})
+  }, [_id])
 
   const timeAgo = formatDistanceToNow(new Date(createdAt), { addSuffix: true })
 
@@ -26,6 +37,12 @@ export default function ListingCard({ listing }) {
       <div className="card-body">
         <div className="card-location">📍 {location}</div>
         <h3 className="card-title">{title}</h3>
+
+        {/* ✅ NEW — Star rating shown on card */}
+        <div className="card-rating">
+          <StarRating average={rating.average} total={rating.total} size="sm" />
+        </div>
+
         <p className="card-desc">{description}</p>
         <div className="card-footer">
           <span className="card-creator">by {creator?.name}</span>
