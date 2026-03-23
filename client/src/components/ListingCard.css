@@ -1,75 +1,46 @@
 .listing-card {
-  background: white;
-  border-radius: 20px;
-  overflow: hidden;
+  background: white; border-radius: 20px; overflow: hidden;
   box-shadow: var(--card-shadow);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
-  display: flex; flex-direction: column;
-  cursor: pointer;
+  display: flex; flex-direction: column; cursor: pointer;
 }
+.listing-card:hover { transform: translateY(-6px); box-shadow: var(--card-hover); }
 
-.listing-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--card-hover);
-}
-
-.card-image-wrap {
-  position: relative; overflow: hidden; height: 210px;
-}
-
-.card-image {
-  width: 100%; height: 100%; object-fit: cover;
-  transition: transform 0.4s ease;
-}
-
+.card-image-wrap { position: relative; overflow: hidden; height: 210px; }
+.card-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
 .listing-card:hover .card-image { transform: scale(1.05); }
 
 .card-price {
   position: absolute; top: 12px; right: 12px;
   background: var(--terracotta); color: white;
-  padding: 0.3rem 0.75rem; border-radius: 50px;
-  font-size: 0.85rem; font-weight: 600;
+  padding: 0.3rem 0.75rem; border-radius: 50px; font-size: 0.85rem; font-weight: 600;
 }
-
 .card-likes {
   position: absolute; top: 12px; left: 12px;
   background: rgba(255,255,255,0.9); color: var(--terracotta);
-  padding: 0.25rem 0.65rem; border-radius: 50px;
-  font-size: 0.8rem; font-weight: 600;
+  padding: 0.25rem 0.65rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600;
 }
 
-.card-body {
-  padding: 1.2rem 1.3rem 1.3rem;
-  flex: 1; display: flex; flex-direction: column; gap: 0.35rem;
-}
+.card-body { padding: 1.2rem 1.3rem 1.3rem; flex: 1; display: flex; flex-direction: column; gap: 0.35rem; }
 
-.card-location {
-  font-size: 0.78rem; color: var(--ocean);
-  font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
-}
-
-.card-title {
-  font-size: 1.1rem; font-weight: 600; color: var(--ink);
-  line-height: 1.3;
-}
-
-/* ✅ NEW */
-.card-rating {
-  margin: 0.1rem 0;
-}
-
+.card-location { font-size: 0.78rem; color: var(--ocean); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.card-title { font-size: 1.1rem; font-weight: 600; color: var(--ink); line-height: 1.3; }
+.card-rating { margin: 0.1rem 0; }
 .card-desc {
-  font-size: 0.88rem; color: var(--ink-light);
-  line-height: 1.5; flex: 1;
-  display: -webkit-box; -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical; overflow: hidden;
+  font-size: 0.88rem; color: var(--ink-light); line-height: 1.5; flex: 1;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 
 .card-footer {
   display: flex; justify-content: space-between; align-items: center;
-  margin-top: 0.5rem; padding-top: 0.75rem;
-  border-top: 1px solid var(--sand-dark);
+  margin-top: 0.5rem; padding-top: 0.75rem; border-top: 1px solid var(--sand-dark);
 }
 
-.card-creator { font-size: 0.82rem; font-weight: 600; color: var(--ink); }
+/* ✅ NEW */
+.card-creator-info { display: flex; align-items: center; gap: 0.5rem; }
+.card-creator-name {
+  font-size: 0.82rem; font-weight: 600; color: var(--ink);
+  text-decoration: none; transition: color 0.2s;
+}
+.card-creator-name:hover { color: var(--terracotta); text-decoration: underline; }
 .card-time { font-size: 0.78rem; color: var(--mist); }

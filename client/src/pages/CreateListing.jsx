@@ -88,7 +88,7 @@ export default function CreateListing() {
                   />
                   <span className="toggle-slider"></span>
                   <span className="toggle-text">
-                    {form.commentsAllowed ? '💬 Comments enabled' : '🚫 Comments disabled'}
+                    {form.commentsAllowed ? ' Comments enabled' : ' Comments disabled'}
                   </span>
                 </label>
                 <small style={{ color: 'var(--mist)', fontSize: '0.8rem', marginTop: '0.3rem' }}>

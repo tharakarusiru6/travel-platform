@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import UserAvatar from './UserAvatar'
 import toast from 'react-hot-toast'
 import './Navbar.css'
 
@@ -24,8 +25,14 @@ export default function Navbar() {
         <div className="navbar-actions">
           {isLoggedIn ? (
             <>
-              <span className="navbar-greeting">Hi, {user?.name?.split(' ')[0]}!</span>
               <Link to="/create" className="btn btn-primary">+ New Experience</Link>
+
+              {/* ✅ NEW — photo + name clickable → goes to own profile */}
+              <Link to={`/profile/${user?._id}`} className="navbar-profile">
+                <UserAvatar user={user} size="sm" linkable={false} />
+                <span className="navbar-username">{user?.name?.split(' ')[0]}</span>
+              </Link>
+
               <button onClick={handleLogout} className="btn btn-secondary">Logout</button>
             </>
           ) : (

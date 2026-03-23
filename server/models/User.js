@@ -20,7 +20,36 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Password is required'],
     minlength: [6, 'Password must be at least 6 characters']
+  },
+
+  // ✅ NEW profile fields
+  photo: {
+    type: String,
+    default: ''
+  },
+  about: {
+    type: String,
+    default: '',
+    maxlength: [200, 'About cannot exceed 200 characters']
+  },
+  phone: {
+    type: String,
+    default: ''
+  },
+  phonePublic: {
+    type: Boolean,
+    default: false
+  },
+  socialMedia: {
+    instagram: { type: String, default: '' },
+    facebook:  { type: String, default: '' },
+    twitter:   { type: String, default: '' }
+  },
+  socialPublic: {
+    type: Boolean,
+    default: false
   }
+
 }, { timestamps: true });
 
 // Hash password before saving
@@ -30,7 +59,7 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-// Compare password method
+// Compare password
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };

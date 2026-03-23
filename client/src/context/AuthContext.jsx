@@ -7,7 +7,6 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // On mount, check if token exists and validate it
   useEffect(() => {
     const token = localStorage.getItem('token')
     const savedUser = localStorage.getItem('user')
@@ -25,6 +24,13 @@ export function AuthProvider({ children }) {
     setUser(userData)
   }
 
+  // ✅ NEW — update user info after profile edit
+  const updateUser = (updatedData) => {
+    const merged = { ...user, ...updatedData }
+    localStorage.setItem('user', JSON.stringify(merged))
+    setUser(merged)
+  }
+
   const logout = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
@@ -33,7 +39,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading, isLoggedIn: !!user }}>
+    <AuthContext.Provider value={{ user, login, logout, updateUser, loading, isLoggedIn: !!user }}>
       {children}
     </AuthContext.Provider>
   )

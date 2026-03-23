@@ -7,8 +7,8 @@ import Register from './pages/Register'
 import CreateListing from './pages/CreateListing'
 import EditListing from './pages/EditListing'
 import ListingDetail from './pages/ListingDetail'
+import UserProfile from './pages/UserProfile'   // ✅ NEW
 
-// Protected route wrapper
 function PrivateRoute({ children }) {
   const { isLoggedIn, loading } = useAuth()
   if (loading) return <div className="spinner" style={{ marginTop: '20vh' }} />
@@ -24,6 +24,7 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/listings/:id" element={<ListingDetail />} />
+        <Route path="/profile/:userId" element={<UserProfile />} />  {/* ✅ NEW */}
         <Route path="/create" element={<PrivateRoute><CreateListing /></PrivateRoute>} />
         <Route path="/edit/:id" element={<PrivateRoute><EditListing /></PrivateRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />

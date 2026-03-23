@@ -3,14 +3,14 @@ const Comment = require('../models/Comment');
 const Listing = require('../models/Listing');
 const { protect } = require('../middleware/authMiddleware');
 
-const router = express.Router({ mergeParams: true }); // mergeParams gets :listingId from parent
+const router = express.Router({ mergeParams: true });
 
-// GET /api/listings/:listingId/comments — get all comments for a listing
+// GET /api/listings/:listingId/comments
 router.get('/', async (req, res) => {
   try {
     const comments = await Comment.find({ listing: req.params.listingId })
-      .populate('author', 'name')
-      .populate('replies.author', 'name')
+      .populate('author', 'name photo')           // ✅ FIX — added photo
+      .populate('replies.author', 'name photo')    // ✅ FIX — added photo
       .sort({ createdAt: -1 });
 
     res.json(comments);
@@ -19,13 +19,12 @@ router.get('/', async (req, res) => {
   }
 });
 
-// POST /api/listings/:listingId/comments — add a comment (protected)
+// POST /api/listings/:listingId/comments
 router.post('/', protect, async (req, res) => {
   try {
     const listing = await Listing.findById(req.params.listingId);
     if (!listing) return res.status(404).json({ message: 'Listing not found.' });
 
-    // Check if comments are allowed
     if (!listing.commentsAllowed) {
       return res.status(403).json({ message: 'Comments are disabled for this listing.' });
     }
@@ -41,14 +40,14 @@ router.post('/', protect, async (req, res) => {
       text: text.trim()
     });
 
-    await comment.populate('author', 'name');
+    await comment.populate('author', 'name photo');  // ✅ FIX — added photo
     res.status(201).json(comment);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-// DELETE /api/listings/:listingId/comments/:commentId — delete comment (author or listing owner)
+// DELETE /api/listings/:listingId/comments/:commentId
 router.delete('/:commentId', protect, async (req, res) => {
   try {
     const comment = await Comment.findById(req.params.commentId);
@@ -70,7 +69,7 @@ router.delete('/:commentId', protect, async (req, res) => {
   }
 });
 
-// POST /api/listings/:listingId/comments/:commentId/reply — any logged in user can reply
+// POST /api/listings/:listingId/comments/:commentId/reply
 router.post('/:commentId/reply', protect, async (req, res) => {
   try {
     const comment = await Comment.findById(req.params.commentId);
@@ -83,8 +82,8 @@ router.post('/:commentId/reply', protect, async (req, res) => {
 
     comment.replies.push({ text: text.trim(), author: req.user._id });
     await comment.save();
-    await comment.populate('author', 'name');
-    await comment.populate('replies.author', 'name');
+    await comment.populate('author', 'name photo');          // ✅ FIX — added photo
+    await comment.populate('replies.author', 'name photo');  // ✅ FIX — added photo
 
     res.status(201).json(comment);
   } catch (error) {

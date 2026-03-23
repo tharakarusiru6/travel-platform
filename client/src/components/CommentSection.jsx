@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { formatDistanceToNow } from 'date-fns'
 import { useAuth } from '../context/AuthContext'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import api from '../utils/api'
 import toast from 'react-hot-toast'
+import UserAvatar from './UserAvatar'
 import './CommentSection.css'
 
 export default function CommentSection({ listingId, commentsAllowed, isOwner }) {
@@ -13,10 +14,9 @@ export default function CommentSection({ listingId, commentsAllowed, isOwner }) 
   const [loading, setLoading] = useState(true)
   const [text, setText] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [replyText, setReplyText] = useState({})      // { commentId: text }
-  const [replyOpen, setReplyOpen] = useState({})       // { commentId: true/false }
+  const [replyText, setReplyText] = useState({})
+  const [replyOpen, setReplyOpen] = useState({})
 
-  // Load comments
   useEffect(() => {
     api.get(`/listings/${listingId}/comments`)
       .then(({ data }) => setComments(data))
@@ -24,7 +24,6 @@ export default function CommentSection({ listingId, commentsAllowed, isOwner }) 
       .finally(() => setLoading(false))
   }, [listingId])
 
-  // Submit new comment
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!isLoggedIn) { navigate('/login'); return }
@@ -42,7 +41,6 @@ export default function CommentSection({ listingId, commentsAllowed, isOwner }) 
     }
   }
 
-  // Delete comment
   const handleDelete = async (commentId) => {
     try {
       await api.delete(`/listings/${listingId}/comments/${commentId}`)
@@ -53,12 +51,11 @@ export default function CommentSection({ listingId, commentsAllowed, isOwner }) 
     }
   }
 
-  // Submit reply (owner only)
   const handleReply = async (commentId) => {
-    const text = replyText[commentId]
-    if (!text?.trim()) return
+    const replyContent = replyText[commentId]
+    if (!replyContent?.trim()) return
     try {
-      const { data } = await api.post(`/listings/${listingId}/comments/${commentId}/reply`, { text })
+      const { data } = await api.post(`/listings/${listingId}/comments/${commentId}/reply`, { text: replyContent })
       setComments(prev => prev.map(c => c._id === commentId ? data : c))
       setReplyText(prev => ({ ...prev, [commentId]: '' }))
       setReplyOpen(prev => ({ ...prev, [commentId]: false }))
@@ -71,7 +68,7 @@ export default function CommentSection({ listingId, commentsAllowed, isOwner }) 
   return (
     <div className="comment-section">
       <h3 className="comment-title">
-        💬 Comments
+        Comments
         {!commentsAllowed && <span className="comments-disabled-badge">Disabled</span>}
       </h3>
 
@@ -80,7 +77,8 @@ export default function CommentSection({ listingId, commentsAllowed, isOwner }) 
         isLoggedIn ? (
           <form onSubmit={handleSubmit} className="comment-form">
             <div className="comment-input-row">
-              <div className="comment-avatar">{user?.name?.[0]?.toUpperCase()}</div>
+              {/* FIX 1 — use UserAvatar instead of old initials div */}
+              <UserAvatar user={user} size="sm" linkable={false} />
               <input
                 type="text"
                 placeholder="Write a comment..."
@@ -103,7 +101,7 @@ export default function CommentSection({ listingId, commentsAllowed, isOwner }) 
         )
       ) : (
         <div className="comments-off-msg">
-          🚫 The experience owner has disabled comments on this listing.
+          The experience owner has disabled comments on this listing.
         </div>
       )}
 
@@ -111,26 +109,28 @@ export default function CommentSection({ listingId, commentsAllowed, isOwner }) 
       {loading ? (
         <div className="comment-loading">Loading comments...</div>
       ) : comments.length === 0 ? (
-        commentsAllowed && <div className="no-comments">No comments yet. Be the first! 🌟</div>
+        commentsAllowed && <div className="no-comments">No comments yet. Be the first!</div>
       ) : (
         <div className="comments-list">
           {comments.map(comment => (
             <div key={comment._id} className="comment-card">
               <div className="comment-header">
-                <div className="comment-avatar-sm">{comment.author?.name?.[0]?.toUpperCase()}</div>
+                {/* FIX 2 — UserAvatar for comment author */}
+                <UserAvatar user={comment.author} size="sm" linkable={true} />
                 <div className="comment-meta">
-                  <span className="comment-author">{comment.author?.name}</span>
+                  <Link to={`/profile/${comment.author?._id}`} className="comment-author-link">
+                    {comment.author?.name}
+                  </Link>
                   <span className="comment-time">
                     {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
                   </span>
                 </div>
-                {/* Delete button — comment author or listing owner */}
                 {isLoggedIn && (comment.author?._id === user._id || isOwner) && (
                   <button
                     className="comment-delete"
                     onClick={() => handleDelete(comment._id)}
                     title="Delete comment"
-                  >✕</button>
+                  >x</button>
                 )}
               </div>
 
@@ -141,10 +141,13 @@ export default function CommentSection({ listingId, commentsAllowed, isOwner }) 
                 <div className="replies-list">
                   {comment.replies.map((reply, i) => (
                     <div key={i} className="reply-card">
-                      <div className="reply-avatar">{reply.author?.name?.[0]?.toUpperCase()}</div>
+                      {/* FIX 3 — UserAvatar for reply author */}
+                      <UserAvatar user={reply.author} size="sm" linkable={true} />
                       <div className="reply-body">
                         <div className="reply-header">
-                          <span className="reply-author">{reply.author?.name}</span>
+                          <Link to={`/profile/${reply.author?._id}`} className="reply-author-link">
+                            {reply.author?.name}
+                          </Link>
                           <span className="comment-time">
                             {formatDistanceToNow(new Date(reply.createdAt), { addSuffix: true })}
                           </span>
@@ -156,7 +159,7 @@ export default function CommentSection({ listingId, commentsAllowed, isOwner }) 
                 </div>
               )}
 
-              {/* Reply input — any logged in user */}
+              {/* Reply input */}
               {isLoggedIn && commentsAllowed && (
                 <div className="reply-section">
                   {replyOpen[comment._id] ? (
@@ -183,7 +186,7 @@ export default function CommentSection({ listingId, commentsAllowed, isOwner }) 
                     <button
                       className="reply-toggle"
                       onClick={() => setReplyOpen(prev => ({ ...prev, [comment._id]: true }))}
-                    >↩ Reply</button>
+                    >Reply</button>
                   )}
                 </div>
               )}

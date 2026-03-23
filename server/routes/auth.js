@@ -28,7 +28,8 @@ router.post('/register', async (req, res) => {
 
     res.status(201).json({
       token,
-      user: { _id: user._id, name: user.name, email: user.email }
+      // ✅ FIX — include photo so navbar shows it immediately
+      user: { _id: user._id, name: user.name, email: user.email, photo: user.photo }
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -53,7 +54,8 @@ router.post('/login', async (req, res) => {
 
     res.json({
       token,
-      user: { _id: user._id, name: user.name, email: user.email }
+      // ✅ FIX — include photo so navbar shows it immediately after login
+      user: { _id: user._id, name: user.name, email: user.email, photo: user.photo }
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

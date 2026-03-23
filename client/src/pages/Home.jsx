@@ -80,7 +80,6 @@ export default function Home() {
           <div className="spinner" />
         ) : listings.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-icon">🌍</div>
             <h3>No experiences found</h3>
             <p>{search ? 'Try a different search term.' : 'Be the first to add a travel experience!'}</p>
           </div>

@@ -98,7 +98,7 @@ export default function EditListing() {
                   />
                   <span className="toggle-slider"></span>
                   <span className="toggle-text">
-                    {form.commentsAllowed ? '💬 Comments enabled' : '🚫 Comments disabled'}
+                    {form.commentsAllowed ? ' Comments enabled' : ' Comments disabled'}
                   </span>
                 </label>
               </div>

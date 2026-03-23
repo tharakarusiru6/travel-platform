@@ -5,8 +5,9 @@ import api from '../utils/api'
 import { useAuth } from '../context/AuthContext'
 import toast from 'react-hot-toast'
 import CommentSection from '../components/CommentSection'
-import StarRating from '../components/StarRating'       // ✅ NEW
-import RatingInput from '../components/RatingInput'     // ✅ NEW
+import StarRating from '../components/StarRating'
+import RatingInput from '../components/RatingInput'
+import UserAvatar from '../components/UserAvatar'   // ✅ NEW
 import './ListingDetail.css'
 
 export default function ListingDetail() {
@@ -17,7 +18,7 @@ export default function ListingDetail() {
   const [loading, setLoading] = useState(true)
   const [likeLoading, setLikeLoading] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState(false)
-  const [rating, setRating] = useState({ average: 0, total: 0 }) // ✅ NEW
+  const [rating, setRating] = useState({ average: 0, total: 0 })
 
   useEffect(() => {
     api.get(`/listings/${id}`)
@@ -25,7 +26,6 @@ export default function ListingDetail() {
       .catch(() => { toast.error('Listing not found'); navigate('/') })
       .finally(() => setLoading(false))
 
-    // ✅ NEW — fetch rating summary
     api.get(`/listings/${id}/ratings`)
       .then(({ data }) => setRating({ average: data.average, total: data.total }))
       .catch(() => {})
@@ -44,11 +44,8 @@ export default function ListingDetail() {
           ? [...(l.likes || []), user._id]
           : (l.likes || []).filter(uid => uid !== user._id)
       }))
-    } catch {
-      toast.error('Failed to update like')
-    } finally {
-      setLikeLoading(false)
-    }
+    } catch { toast.error('Failed to update like') }
+    finally { setLikeLoading(false) }
   }
 
   const handleDelete = async () => {
@@ -56,9 +53,7 @@ export default function ListingDetail() {
       await api.delete(`/listings/${id}`)
       toast.success('Listing deleted')
       navigate('/')
-    } catch {
-      toast.error('Failed to delete listing')
-    }
+    } catch { toast.error('Failed to delete listing') }
   }
 
   if (loading) return <div className="spinner" style={{ marginTop: '20vh' }} />
@@ -74,12 +69,9 @@ export default function ListingDetail() {
 
         <div className="detail-layout">
           <div className="detail-image-wrap">
-            <img
-              src={listing.imageUrl} alt={listing.title}
+            <img src={listing.imageUrl} alt={listing.title}
               onError={e => { e.target.src = 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80' }}
             />
-
-            {/* ✅ NEW — Rating summary on image */}
             {rating.total > 0 && (
               <div className="image-rating-badge">
                 <StarRating average={rating.average} total={rating.total} size="sm" />
@@ -88,24 +80,23 @@ export default function ListingDetail() {
           </div>
 
           <div className="detail-content">
-            <div className="detail-location">📍 {listing.location}</div>
             <h1 className="detail-title">{listing.title}</h1>
 
-            {/* ✅ NEW — Large rating display under title */}
             <div className="detail-rating-display">
               <StarRating average={rating.average} total={rating.total} size="lg" />
             </div>
 
+            {/* ✅ NEW — avatar + clickable name → goes to creator profile */}
             <div className="detail-meta">
-              <div className="detail-creator">
-                <div className="creator-avatar">{listing.creator?.name?.[0]?.toUpperCase()}</div>
+              <Link to={`/profile/${listing.creator?._id}`} className="detail-creator">
+                <UserAvatar user={listing.creator} size="md" linkable={false} />
                 <div>
                   <div className="creator-name">{listing.creator?.name}</div>
                   <div className="creator-time">
                     {formatDistanceToNow(new Date(listing.createdAt), { addSuffix: true })}
                   </div>
                 </div>
-              </div>
+              </Link>
               {listing.price != null && (
                 <div className="detail-price">${listing.price} <span>per person</span></div>
               )}
@@ -116,25 +107,20 @@ export default function ListingDetail() {
               <p>{listing.description}</p>
             </div>
 
-            {/* ✅ NEW — Interactive rating input */}
             <RatingInput
               listingId={id}
               onRatingUpdate={(data) => setRating({ average: data.average, total: data.total })}
             />
 
             <div className="detail-actions">
-              <button
-                className={`btn like-btn ${isLiked ? 'liked' : ''}`}
-                onClick={handleLike} disabled={likeLoading}
-              >
+              <button className={`btn like-btn ${isLiked ? 'liked' : ''}`} onClick={handleLike} disabled={likeLoading}>
                 {isLiked ? '♥' : '♡'} {likeCount > 0 ? likeCount : ''} {isLiked ? 'Liked' : 'Like'}
               </button>
-
               {isOwner && (
                 <>
-                  <Link to={`/edit/${id}`} className="btn btn-ocean">✏️ Edit</Link>
+                  <Link to={`/edit/${id}`} className="btn btn-ocean"> Edit</Link>
                   {!deleteConfirm ? (
-                    <button className="btn btn-danger" onClick={() => setDeleteConfirm(true)}>🗑 Delete</button>
+                    <button className="btn btn-danger" onClick={() => setDeleteConfirm(true)}> Delete</button>
                   ) : (
                     <div className="delete-confirm">
                       <span>Are you sure?</span>
@@ -146,11 +132,7 @@ export default function ListingDetail() {
               )}
             </div>
 
-            <CommentSection
-              listingId={id}
-              commentsAllowed={listing.commentsAllowed}
-              isOwner={isOwner}
-            />
+            <CommentSection listingId={id} commentsAllowed={listing.commentsAllowed} isOwner={isOwner} />
           </div>
         </div>
       </div>
