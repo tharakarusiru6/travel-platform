@@ -184,7 +184,7 @@ export default function UserProfile() {
               </div>
             )}
           </div>
-        </div>
+        </div> 
 
         {/* Listings */}
         <div className="profile-listings">
