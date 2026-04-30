@@ -3,11 +3,14 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
-const authRoutes    = require('./routes/auth');
-const listingRoutes = require('./routes/listings');
-const commentRoutes = require('./routes/comments');
-const ratingRoutes  = require('./routes/ratings');
-const profileRoutes = require('./routes/profile'); // ✅ NEW
+const authRoutes      = require('./routes/auth');
+const listingRoutes   = require('./routes/listings');
+const commentRoutes   = require('./routes/comments');
+const ratingRoutes    = require('./routes/ratings');
+const profileRoutes   = require('./routes/profile');
+const stayRoutes      = require('./routes/stays');
+const bookingRoutes   = require('./routes/bookings');
+const stayRatingRoutes = require('./routes/stayRatings');
 
 const app = express();
 
@@ -21,14 +24,17 @@ app.use('/api/auth',     authRoutes);
 app.use('/api/listings', listingRoutes);
 app.use('/api/listings/:listingId/comments', commentRoutes);
 app.use('/api/listings/:listingId/ratings',  ratingRoutes);
-app.use('/api/profile',  profileRoutes); // ✅ NEW
+app.use('/api/profile',  profileRoutes);
+app.use('/api/stays',    stayRoutes);
+app.use('/api/bookings', bookingRoutes);
+app.use('/api/stays/:stayId/ratings', stayRatingRoutes);
 
 app.get('/', (req, res) => res.json({ message: 'TravelNest API is running!' }));
 
 const PORT = process.env.PORT || 5000;
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
-    console.log('✅ MongoDB connected');
-    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+    console.log('MongoDB connected');
+    app.listen(PORT, () => console.log('Server running on port ' + PORT));
   })
-  .catch(err => { console.error('❌ MongoDB connection error:', err.message); process.exit(1); });
+  .catch(err => { console.error('MongoDB connection error:', err.message); process.exit(1); });

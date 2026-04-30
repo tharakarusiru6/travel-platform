@@ -22,44 +22,33 @@ const userSchema = new mongoose.Schema({
     minlength: [6, 'Password must be at least 6 characters']
   },
 
-  // ✅ NEW profile fields
-  photo: {
+  // ✅ NEW — role field
+  role: {
     type: String,
-    default: ''
+    enum: ['traveler', 'hotel_owner'],
+    default: 'traveler'
   },
-  about: {
-    type: String,
-    default: '',
-    maxlength: [200, 'About cannot exceed 200 characters']
-  },
-  phone: {
-    type: String,
-    default: ''
-  },
-  phonePublic: {
-    type: Boolean,
-    default: false
-  },
+
+  // Profile fields
+  photo:        { type: String, default: '' },
+  about:        { type: String, default: '', maxlength: [200, 'About cannot exceed 200 characters'] },
+  phone:        { type: String, default: '' },
+  phonePublic:  { type: Boolean, default: false },
   socialMedia: {
     instagram: { type: String, default: '' },
     facebook:  { type: String, default: '' },
     twitter:   { type: String, default: '' }
   },
-  socialPublic: {
-    type: Boolean,
-    default: false
-  }
+  socialPublic: { type: Boolean, default: false }
 
 }, { timestamps: true });
 
-// Hash password before saving
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
   next();
 });
 
-// Compare password
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };

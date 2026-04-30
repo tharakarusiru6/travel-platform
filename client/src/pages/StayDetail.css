@@ -1,0 +1,62 @@
+.stay-detail-page { padding: 2.5rem 0 5rem; min-height: calc(100vh - 70px); }
+
+.back-btn { display: inline-flex; align-items: center; color: var(--ink-light); font-size: 0.9rem; font-weight: 500; margin-bottom: 2rem; transition: color 0.2s; text-decoration: none; }
+.back-btn:hover { color: var(--terracotta); }
+
+.stay-detail-layout { display: grid; grid-template-columns: 1fr 380px; gap: 2.5rem; align-items: start; }
+
+.stay-detail-image-wrap { border-radius: 24px; overflow: hidden; aspect-ratio: 16/9; position: relative; box-shadow: var(--card-shadow); margin-bottom: 2rem; }
+.stay-detail-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+.image-rating-badge { position: absolute; bottom: 14px; left: 14px; background: rgba(255,255,255,0.95); backdrop-filter: blur(6px); padding: 0.4rem 0.85rem; border-radius: 50px; box-shadow: 0 2px 12px rgba(0,0,0,0.15); }
+
+.stay-detail-location { color: var(--ocean); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; }
+.stay-detail-name { font-size: clamp(1.6rem, 3vw, 2.2rem); color: var(--ink); line-height: 1.2; margin-bottom: 0.75rem; }
+.stay-detail-rating { margin-bottom: 1.25rem; }
+
+.stay-detail-meta { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem; background: var(--sand); border-radius: 16px; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap; }
+
+.stay-detail-owner { display: flex; align-items: center; gap: 0.85rem; text-decoration: none; }
+.owner-name { font-weight: 600; color: var(--ink); font-size: 0.95rem; }
+.owner-time { color: var(--mist); font-size: 0.8rem; }
+
+.stay-detail-price { text-align: right; }
+.price-amount { font-size: 1.8rem; font-weight: 700; color: var(--ocean); font-family: 'Playfair Display', serif; display: block; }
+.price-label { font-size: 0.8rem; color: var(--mist); }
+
+.stay-detail-desc { margin-bottom: 1.5rem; }
+.stay-detail-desc h3 { font-size: 1.1rem; margin-bottom: 0.75rem; color: var(--ink); }
+.stay-detail-desc p { color: var(--ink-light); line-height: 1.75; }
+
+.stay-amenities { margin-bottom: 1.5rem; }
+.stay-amenities h3 { font-size: 1.1rem; margin-bottom: 0.75rem; color: var(--ink); }
+.amenities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.5rem; }
+.amenity-item { background: #EEF6FF; color: var(--ocean); padding: 0.5rem 0.85rem; border-radius: 10px; font-size: 0.85rem; font-weight: 600; text-align: center; }
+
+.stay-detail-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; margin-top: 1.5rem; }
+
+.like-btn { background: var(--sand); color: var(--ink); border: 1.5px solid var(--sand-dark); font-size: 0.95rem; transition: all 0.2s; }
+.like-btn:hover, .like-btn.liked { background: #fff0f0; color: #e74c3c; border-color: #e74c3c; }
+
+.delete-confirm { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.delete-confirm span { font-size: 0.9rem; color: var(--ink-light); }
+
+/* Booking panel */
+.booking-panel { background: white; border-radius: 24px; padding: 1.75rem; box-shadow: var(--card-shadow); position: sticky; top: 90px; }
+
+.booking-panel__title { font-size: 1.2rem; color: var(--ink); margin-bottom: 0.4rem; }
+.booking-panel__price { font-size: 1.6rem; font-weight: 700; color: var(--ocean); margin-bottom: 1.5rem; font-family: 'Playfair Display', serif; }
+.booking-panel__price span { font-size: 0.85rem; color: var(--mist); font-family: 'DM Sans', sans-serif; font-weight: 400; }
+
+.booking-summary { background: var(--sand); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; }
+.booking-summary__row { display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--ink-light); margin-bottom: 0.5rem; }
+.booking-summary__total { display: flex; justify-content: space-between; font-weight: 700; font-size: 1rem; color: var(--ink); padding-top: 0.5rem; border-top: 1px solid var(--sand-dark); }
+
+.booking-submit { width: 100%; justify-content: center; padding: 0.9rem; font-size: 1rem; border-radius: 12px; }
+.booking-login-note { text-align: center; margin-top: 0.75rem; font-size: 0.85rem; color: var(--mist); }
+.booking-login-note a { color: var(--terracotta); font-weight: 600; }
+
+@media (max-width: 900px) {
+  .stay-detail-layout { grid-template-columns: 1fr; }
+  .booking-panel { position: static; }
+}

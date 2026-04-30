@@ -1,28 +1,27 @@
 # TravelNest - Travel Experience Platform
 
-TravelNest is a full-stack MERN application where users can publish and explore travel listings, interact through likes/comments/ratings, and manage public profile details.
+TravelNest is a full-stack MERN travel marketplace with two parallel experiences: traveler-facing travel listings and hotel-owner-managed stays. Users can publish content, discover places to stay, rate and like entries, manage profiles, and handle bookings through role-based flows.
 
 Live demo: https://drive.google.com/file/d/1ccYk5mygV-e5VHYtPWDLZkz1vxMkL-RY/view?usp=sharing
 Repository: https://github.com/tharakarusiru6/travel-platform
 
 ## Key Features
 
-- JWT authentication (register, login, current user)
-- Protected frontend routes for authenticated actions
-- Create, read, update, and delete travel listings
-- Full-text listing search and paginated listing feed
-- Like/unlike listings
-- Comments with threaded replies
-- 1-5 star rating system (per-user rating, aggregated average)
-- Public user profiles with privacy-controlled contact/social fields
-- Toggle comments on/off per listing (owner control)
+- JWT authentication with register, login, and current-user support
+- Role-based access for travelers and hotel owners
+- Travel listings CRUD with search, likes, comments, threaded replies, and ratings
+- Comments can be enabled or disabled per listing by the owner
+- Public user profiles with private/public contact and social fields
+- Stay management for hotel owners with CRUD, likes, filters, and ratings
+- Booking lifecycle for travelers and owners, including confirm, cancel, and refund flow
+- Paginated feeds for both listings and stays
 
 ## Tech Stack
 
-- Frontend: React, Vite, React Router, Axios, react-hot-toast
+- Frontend: React, Vite, React Router, Axios, react-hot-toast, date-fns
 - Backend: Node.js, Express.js
 - Database: MongoDB, Mongoose
-- Authentication/Security: JWT, bcryptjs
+- Authentication/Security: JWT, bcryptjs, CORS
 
 ## Project Structure
 
@@ -38,7 +37,7 @@ travel-platform/
 
 - Node.js 18+
 - npm
-- MongoDB Atlas account (or local MongoDB)
+- MongoDB Atlas account or local MongoDB instance
 
 ### 1) Setup Backend
 
@@ -87,59 +86,85 @@ Frontend URL: `http://localhost:5173`
 
 ## Authentication Flow
 
-- User logs in or registers and receives a JWT token.
-- Token is stored in localStorage.
-- Axios request interceptor automatically adds `Authorization: Bearer <token>`.
-- Protected backend routes validate token using auth middleware.
-- On 401 responses, client clears auth state and redirects to login.
+- User registers or logs in and receives a JWT token.
+- Token is stored in `localStorage`.
+- Axios adds `Authorization: Bearer <token>` on authenticated requests.
+- Protected backend routes validate the token with auth middleware.
+- On `401` responses, the client clears auth state and redirects to login.
 
-## Database Models
+## Data Models
 
-- User: account info, password hash, photo, bio/about, privacy fields, social links
-- Listing: travel listing details, creator reference, likes, comments toggle
-- Comment: listing reference, author reference, text, nested replies
-- Rating: listing reference, user reference, stars (unique index per user/listing)
+- User: account info, password hash, role, photo, bio/about, privacy fields, and social links
+- Listing: travel listing details, creator reference, likes, comments toggle, and rating data
+- Comment: listing reference, author reference, text, and nested replies
+- Rating: listing reference, user reference, and stars with a one-rating-per-user rule
+- Stay: hotel stay details, owner reference, likes, booked dates, amenities, and ratings
+- Booking: stay reference, traveler reference, dates, totals, status, and cancellation/refund details
 
 ## Indexing Strategy
 
 - Listing text index on `title`, `location`, and `description` for search
 - Listing index on `createdAt` for feed sorting
-- Comment index on `listing + createdAt` for faster listing comment loads
-- Unique rating index on `listing + user` to enforce one rating per user per listing
+- Comment index on `listing + createdAt` for faster comment loads
+- Unique rating index on `listing + user` to enforce one rating per user per entry
+- Stay text and booking-date handling to support search, filters, and availability checks
 
-## API Endpoints (17)
+## API Endpoints
 
 ### Auth
 
 - `POST /api/auth/register` - Register user
 - `POST /api/auth/login` - Login user
-- `GET /api/auth/me` - Get current user (protected)
+- `GET /api/auth/me` - Get current user
 
 ### Listings
 
-- `GET /api/listings` - List listings (search + pagination)
+- `GET /api/listings` - List listings with search and pagination
 - `GET /api/listings/:id` - Get listing details
-- `POST /api/listings` - Create listing (protected)
-- `PUT /api/listings/:id` - Update own listing (protected)
-- `DELETE /api/listings/:id` - Delete own listing (protected)
-- `POST /api/listings/:id/like` - Toggle like (protected)
+- `POST /api/listings` - Create listing
+- `PUT /api/listings/:id` - Update own listing
+- `DELETE /api/listings/:id` - Delete own listing
+- `POST /api/listings/:id/like` - Toggle like
 
-### Comments
+### Listing Comments
 
 - `GET /api/listings/:listingId/comments` - Get listing comments
-- `POST /api/listings/:listingId/comments` - Add comment (protected)
-- `DELETE /api/listings/:listingId/comments/:commentId` - Delete comment (author/owner)
-- `POST /api/listings/:listingId/comments/:commentId/reply` - Reply to comment (protected)
+- `POST /api/listings/:listingId/comments` - Add comment
+- `DELETE /api/listings/:listingId/comments/:commentId` - Delete comment
+- `POST /api/listings/:listingId/comments/:commentId/reply` - Reply to comment
 
-### Ratings
+### Listing Ratings
 
 - `GET /api/listings/:listingId/ratings` - Get rating summary and current user rating
-- `POST /api/listings/:listingId/ratings` - Submit/update rating (protected)
+- `POST /api/listings/:listingId/ratings` - Submit or update rating
 
 ### Profile
 
 - `GET /api/profile/:userId` - Get public profile
-- `PUT /api/profile` - Update own profile (protected)
+- `PUT /api/profile` - Update own profile
+
+### Stays
+
+- `GET /api/stays` - List stays with search, filters, and pagination
+- `GET /api/stays/:id` - Get stay details
+- `POST /api/stays` - Create stay for hotel owners
+- `PUT /api/stays/:id` - Update own stay
+- `DELETE /api/stays/:id` - Delete own stay
+- `POST /api/stays/:id/like` - Toggle like
+
+### Stay Ratings
+
+- `GET /api/stays/:stayId/ratings` - Get stay rating summary and current user rating
+- `POST /api/stays/:stayId/ratings` - Submit or update stay rating
+
+### Bookings
+
+- `POST /api/bookings` - Create booking request
+- `GET /api/bookings/my` - View own bookings
+- `GET /api/bookings/manage` - View bookings for owned stays
+- `PUT /api/bookings/:id/confirm` - Confirm booking
+- `PUT /api/bookings/:id/cancel` - Cancel booking
+- `PUT /api/bookings/:id/refund` - Mark refund as completed
 
 ## Scripts
 
@@ -156,8 +181,7 @@ Frontend (`client/package.json`):
 
 ## Future Improvements
 
-- Image upload support (Cloudinary/S3)
+- Image upload support through Cloudinary or S3
 - Rate limiting for write endpoints
-- Role-based accounts (host/traveler)
-- Notification system for likes/comments/replies
-- Automated tests (unit + integration)
+- Notifications for likes, comments, replies, and booking updates
+- Automated tests for API and UI flows

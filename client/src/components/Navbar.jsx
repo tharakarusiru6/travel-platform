@@ -7,11 +7,12 @@ import './Navbar.css'
 export default function Navbar() {
   const { user, isLoggedIn, logout } = useAuth()
   const navigate = useNavigate()
+  const isHotelOwner = user?.role === 'hotel_owner'
 
   const handleLogout = () => {
     logout()
     toast.success('Logged out successfully')
-    navigate('/login')
+    navigate('/')
   }
 
   return (
@@ -25,10 +26,19 @@ export default function Navbar() {
         <div className="navbar-actions">
           {isLoggedIn ? (
             <>
-              <Link to="/create" className="btn btn-primary">+ New Experience</Link>
+              {isHotelOwner ? (
+                <>
+                  <Link to="/create-stay" className="btn btn-primary">+ List Property</Link>
+                  <Link to="/manage-bookings" className="btn btn-ocean">Manage Bookings</Link>
+                </>
+              ) : (
+                <>
+                  <Link to="/create" className="btn btn-primary">+ New Experience</Link>
+                  <Link to="/my-bookings" className="btn btn-ocean">My Bookings</Link>
+                </>
+              )}
 
-              {/* ✅ NEW — photo + name clickable → goes to own profile */}
-              <Link to={`/profile/${user?._id}`} className="navbar-profile">
+              <Link to={'/profile/' + user?._id} className="navbar-profile">
                 <UserAvatar user={user} size="sm" linkable={false} />
                 <span className="navbar-username">{user?.name?.split(' ')[0]}</span>
               </Link>

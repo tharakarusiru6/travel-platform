@@ -12,7 +12,7 @@ const generateToken = (id) => {
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: 'All fields are required.' });
@@ -23,13 +23,15 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'Email already registered.' });
     }
 
-    const user = await User.create({ name, email, password });
+    const user = await User.create({
+      name, email, password,
+      role: role === 'hotel_owner' ? 'hotel_owner' : 'traveler' // ✅ NEW
+    });
     const token = generateToken(user._id);
 
     res.status(201).json({
       token,
-      // ✅ FIX — include photo so navbar shows it immediately
-      user: { _id: user._id, name: user.name, email: user.email, photo: user.photo }
+      user: { _id: user._id, name: user.name, email: user.email, photo: user.photo, role: user.role }
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -54,8 +56,7 @@ router.post('/login', async (req, res) => {
 
     res.json({
       token,
-      // ✅ FIX — include photo so navbar shows it immediately after login
-      user: { _id: user._id, name: user.name, email: user.email, photo: user.photo }
+      user: { _id: user._id, name: user.name, email: user.email, photo: user.photo, role: user.role } // ✅ NEW
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
